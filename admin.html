@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>업무 동물 유형 통계</title>
+
+  <style>
+    :root {
+      --brand: #ff7a59;
+      --ink: #26221f;
+      --muted: #777069;
+      --paper: #fffdf8;
+      --line: #eee5da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family:
+        Pretendard,
+        "Noto Sans KR",
+        system-ui,
+        -apple-system,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 10% 0,
+          #fff2d8 0,
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 95% 20%,
+          #e5f7f4 0,
+          transparent 30%
+        ),
+        #f8f5ef;
+    }
+
+    .wrap {
+      width: min(940px, calc(100% - 28px));
+      margin: auto;
+      padding: 36px 0 70px;
+    }
+
+    .card {
+      padding: clamp(24px, 5vw, 48px);
+      border-radius: 28px;
+      background: rgba(255, 253, 248, 0.96);
+      box-shadow: 0 18px 50px rgba(65, 45, 25, 0.12);
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 10px;
+      font-size: clamp(30px, 6vw, 48px);
+      letter-spacing: -0.05em;
+    }
+
+    .description {
+      margin-bottom: 28px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .summary-item {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary-number {
+      margin-top: 4px;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .row {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 11px;
+    }
+
+    .type-name {
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .count {
+      color: var(--muted);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .track {
+      height: 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #f1ebe3;
+    }
+
+    .bar {
+      width: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        #ff9a77,
+        #ff7058
+      );
+
+      transition: width 0.5s ease;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    button,
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .primary {
+      color: white;
+      background: var(--brand);
+    }
+
+    .secondary {
+      color: #51483e;
+      background: #f2ece3;
+    }
+
+    .message {
+      padding: 22px;
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: white;
+    }
+
+    .error {
+      color: #a33d2a;
+      background: #fff0ec;
+    }
+
+    @media (max-width: 640px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 25px 19px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="card">
+      <div class="eyebrow">Office Animal Test</div>
+
+      <h1>우리 회사 업무 동물 유형</h1>
+
+      <p class="description">
+        이름이나 사번을 수집하지 않고
+        최종 업무 동물 유형만 집계한 결과입니다.
+      </p>
+
+      <div class="summary">
+        <div class="summary-item">
+          <div class="summary-label">전체 참여 결과</div>
+          <div class="summary-number" id="totalCount">-</div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-label">확인된 유형 수</div>
+          <div class="summary-number" id="typeCount">-</div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-label">가장 많은 유형</div>
+          <div class="summary-number" id="topType">-</div>
+        </div>
+      </div>
+
+      <div id="statistics">
+        <div class="message">
+          통계를 불러오는 중입니다.
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button
+          type="button"
+          class="primary"
+          onclick="loadStatistics()"
+        >
+          통계 새로고침
+        </button>
+
+        index.html
+          테스트 페이지로 이동
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const SUPABASE_URL =
+      "https://hhbuyxvjwxpfpyotfqqg.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_OwFDPrxnI9PRD9iogKZylw_M4waWi7G";
+
+    const TYPE_INFO = {
+      ENFP: { emoji: "🐬", name: "돌고래형" },
+      ENFJ: { emoji: "🐕", name: "리트리버형" },
+      ENTJ: { emoji: "🦅", name: "독수리형" },
+      ENTP: { emoji: "🦊", name: "여우형" },
+
+      INFP: { emoji: "🐈", name: "고양이형" },
+      INFJ: { emoji: "🦉", name: "부엉이형" },
+      INTJ: { emoji: "🕷️", name: "거미형" },
+      INTP: { emoji: "🐙", name: "문어형" },
+
+      ESFP: { emoji: "🦦", name: "수달형" },
+      ESTP: { emoji: "🐆", name: "치타형" },
+      ISFP: { emoji: "🦔", name: "고슴도치형" },
+      ISTP: { emoji: "🦝", name: "너구리형" },
+
+      ESFJ: { emoji: "🐹", name: "햄스터형" },
+      ESTJ: { emoji: "🦫", name: "비버형" },
+      ISFJ: { emoji: "🐘", name: "코끼리형" },
+      ISTJ: { emoji: "🐢", name: "거북이형" }
+    };
+
+    function escapeHtml(value) {
+      return String(value).replace(
+        /[&<>"']/g,
+        function (character) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+          }[character];
+        }
+      );
+    }
+
+    async function loadStatistics() {
+      const statistics =
+        document.getElementById("statistics");
+
+      statistics.innerHTML =
+        '<div class="message">' +
+        '통계를 불러오는 중입니다.' +
+        '</div>';
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/rpc/get_type_counts",
+          {
+            method: "POST",
+
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Authorization":
+                "Bearer " + SUPABASE_KEY,
+
+              "Content-Type":
+                "application/json"
+            },
+
+            body: "{}"
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+
+          throw new Error(
+            response.status + " / " + errorText
+          );
+        }
+
+        const data = await response.json();
+
+        renderStatistics(data);
+
+      } catch (error) {
+        console.error(error);
+
+        statistics.innerHTML =
+          '<div class="message error">' +
+          "통계를 불러오지 못했습니다.<br>" +
+          "Supabase URL, Key, SQL 정책을 확인해주세요." +
+          "</div>";
+      }
+    }
+
+    function renderStatistics(data) {
+      const statistics =
+        document.getElementById("statistics");
+
+      const rows = Array.isArray(data) ? data : [];
+
+      const total = rows.reduce(
+        function (sum, row) {
+          return sum + Number(row.response_count);
+        },
+        0
+      );
+
+      document.getElementById("totalCount")
+        .textContent = total.toLocaleString() + "명";
+
+      document.getElementById("typeCount")
+        .textContent = rows.length + "개";
+
+      if (rows.length > 0) {
+        const first = rows[0];
+        const info = TYPE_INFO[first.mbti];
+
+        document.getElementById("topType")
+          .textContent =
+            info
+              ? info.emoji + " " + info.name
+              : first.mbti;
+      } else {
+        document.getElementById("topType")
+          .textContent = "-";
+      }
+
+      if (rows.length === 0) {
+        statistics.innerHTML =
+          '<div class="message">' +
+          "아직 저장된 결과가 없습니다." +
+          "</div>";
+
+        return;
+      }
+
+      statistics.innerHTML =
+        '<div class="list">' +
+        rows.map(function (row) {
+          const info =
+            TYPE_INFO[row.mbti] || {
+              emoji: "🐾",
+              name: row.animal || row.mbti
+            };
+
+          const count =
+            Number(row.response_count);
+
+          const percent =
+            total > 0
+              ? count / total * 100
+              : 0;
+
+          return (
+            '<div class="row">' +
+
+              '<div class="row-top">' +
+
+                '<div class="type-name">' +
+                  escapeHtml(info.emoji) + " " +
+                  escapeHtml(info.name) + " " +
+                  '<span style="color:#8b8178">' +
+                    "(" + escapeHtml(row.mbti) + ")" +
+                  "</span>" +
+                "</div>" +
+
+                '<div class="count">' +
+                  count.toLocaleString() + "명 · " +
+                  percent.toFixed(1) + "%" +
+                "</div>" +
+
+              "</div>" +
+
+              '<div class="track">' +
+                '<div class="bar" style="width:' +
+                  percent.toFixed(2) +
+                '%"></div>' +
+              "</div>" +
+
+            "</div>"
+          );
+        }).join("") +
+        "</div>";
+    }
+
+    loadStatistics();
+  </script>
+</body>
+
+</html>
