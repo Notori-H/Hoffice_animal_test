@@ -59,7 +59,7 @@ async function saveResult(type) {
           "Prefer": "return=minimal"
         },
         body: JSON.stringify({
-          name: participantName,
+          name: window.participantName,
           mbti: type,
           animal: result.name
         })
