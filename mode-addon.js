@@ -124,14 +124,74 @@
   show("quiz");
   renderQ();
 };
-  window.renderResult = function (type, scores, sharedResult) {
-    originalRenderResult(type, scores, sharedResult);
+  window.renderResult = function (
+  type,
+  scores,
+  sharedResult
+) {
+  /*
+    먼저 기존 결과 페이지 전체를 생성합니다.
+  */
+  originalRenderResult(
+    type,
+    scores,
+    sharedResult
+  );
 
-    if (window.testMode === LEADER_MODE) {
-      const owner = document.querySelector("#resultBody .result-owner");
-      if (owner) owner.textContent = predictionLabel();
-    }
-  };
+  const resultBody =
+    document.getElementById("resultBody");
+
+  if (
+    !resultBody ||
+    !window.participantName
+  ) {
+    return;
+  }
+
+  /*
+    기존 이름 영역이 있는지 확인합니다.
+  */
+  let owner =
+    resultBody.querySelector(
+      ".result-owner"
+    );
+
+  /*
+    기존 이름 영역이 없으면 새로 만듭니다.
+  */
+  if (!owner) {
+    owner =
+      document.createElement("div");
+
+    owner.className =
+      "result-owner";
+
+    /*
+      결과 제목 맨 위에 표시되도록
+      첫 번째 요소 앞에 넣습니다.
+    */
+    resultBody.insertBefore(
+      owner,
+      resultBody.firstChild
+    );
+  }
+
+  /*
+    선택한 테스트 모드에 따라
+    표시 문구를 구분합니다.
+  */
+  if (
+    window.testMode === LEADER_MODE
+  ) {
+    owner.textContent =
+      window.participantName +
+      "님의 예측 결과";
+  } else {
+    owner.textContent =
+      window.participantName +
+      "님의 결과";
+  }
+};
 
   window.finish = function () {
     const scores = { E:0, I:0, N:0, S:0, T:0, F:0, J:0, P:0 };
@@ -217,31 +277,151 @@
     }
   };
 
-  window.saveShareCard = async function (type) {
-    const observer = new MutationObserver(function () {
-      if (window.testMode !== LEADER_MODE) return;
-      const owner = document.querySelector("#shareCardStage .share-card-owner");
-      if (owner) owner.textContent = predictionLabel();
-    });
+window.saveShareCard = async function (
+  type
+) {
+  const observer =
+    new MutationObserver(
+      function () {
+        const card =
+          document.querySelector(
+            "#shareCardStage .share-card"
+          );
 
-    observer.observe(document.body, { childList:true, subtree:true });
-    try {
-      await originalSaveShareCard(type);
-    } finally {
-      observer.disconnect();
+        if (
+          !card ||
+          !window.participantName
+        ) {
+          return;
+        }
+
+        let owner =
+          card.querySelector(
+            ".share-card-owner"
+          );
+
+        if (!owner) {
+          owner =
+            document.createElement(
+              "div"
+            );
+
+          owner.className =
+            "share-card-owner";
+
+          const animalName =
+            card.querySelector(
+              ".share-card-name"
+            );
+
+          if (animalName) {
+            card.insertBefore(
+              owner,
+              animalName
+            );
+          }
+        }
+
+        if (!owner) {
+          return;
+        }
+
+        if (
+          window.testMode ===
+          LEADER_MODE
+        ) {
+          owner.textContent =
+            window.participantName +
+            "님의 예측 결과";
+        } else {
+          owner.textContent =
+            window.participantName +
+            "님의 결과";
+        }
+      }
+    );
+
+  observer.observe(
+    document.body,
+    {
+      childList: true,
+      subtree: true
     }
-  };
+  );
 
-  function applySharedMode() {
-    const params = new URLSearchParams(window.location.search);
-    window.testMode = params.get("mode") || SELF_MODE;
-
-    /* result-sharing.js가 먼저 URL의 name을 읽어 window.participantName에 저장합니다. */
-    if (window.testMode === LEADER_MODE) {
-      const owner = document.querySelector("#resultBody .result-owner");
-      if (owner) owner.textContent = predictionLabel();
-    }
+  try {
+    await originalSaveShareCard(type);
+  } finally {
+    observer.disconnect();
   }
+};
+
+function applySharedMode() {
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  window.testMode =
+    params.get("mode") ||
+    SELF_MODE;
+
+  /*
+    공유 링크에 포함된 이름을
+    mode-addon.js에서도 다시 읽습니다.
+  */
+  const sharedName =
+    params.get("name");
+
+  if (sharedName) {
+    window.participantName =
+      sharedName
+        .trim()
+        .slice(0, 20);
+  }
+
+  const resultBody =
+    document.getElementById(
+      "resultBody"
+    );
+
+  if (
+    !resultBody ||
+    !window.participantName
+  ) {
+    return;
+  }
+
+  let owner =
+    resultBody.querySelector(
+      ".result-owner"
+    );
+
+  if (!owner) {
+    owner =
+      document.createElement("div");
+
+    owner.className =
+      "result-owner";
+
+    resultBody.insertBefore(
+      owner,
+      resultBody.firstChild
+    );
+  }
+
+  if (
+    window.testMode === LEADER_MODE
+  ) {
+    owner.textContent =
+      window.participantName +
+      "님의 예측 결과";
+  } else {
+    owner.textContent =
+      window.participantName +
+      "님의 결과";
+  }
+}
 
   installButtons();
   applySharedMode();
