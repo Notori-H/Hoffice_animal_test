@@ -68,8 +68,24 @@
       );
  
     }
-    /* 두 모드 모두 실제 참여자 이름을 새로 입력합니다. */
-    originalStartTest();
+  participantName = enteredName.trim().slice(0,20);
+  window.participantName = participantName;
+  idx = 0;
+  answers = [];
+  resultSaved = false;
+ 
+  window.history.replaceState(
+    {},
+    "",
+    window.location.origin +
+      window.location.pathname
+);
+ 
+  show("quiz");
+  renderQ();
+ 
+  return;
+}
   };
 
   window.renderResult = function (type, scores, sharedResult) {
