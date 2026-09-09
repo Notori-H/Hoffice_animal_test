@@ -226,7 +226,7 @@
   };
 
   window.startTest = function () {
-    const enteredName = window.prompt("결과에 표시될 이름을 입력해주세요.\n\n(닉네임 가능)\n※ 🎁 결과 공유 이벤트 참여 시 실명 입력 권장", participantName);
+    const enteredName = window.prompt("결과에 표시될 이름을 입력해주세요.\n\n(닉네임 가능)\n※ 🎁 결과 공유 이벤트 참여 시 실명 입력 권장", "");
     if (enteredName === null) return;
     participantName = enteredName.trim().slice(0, 20);
     if (!participantName) {
