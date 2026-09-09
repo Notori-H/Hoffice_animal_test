@@ -193,14 +193,20 @@
     }
   };
 
-  window.shareResult = async function (type) {
-    const result = DATA.results[type];
-    const url = getResultUrl(type);
-    const data = {
-      title: result.emoji + " " + result.name + " | 업무 동물 유형 테스트",
-      text: "나의 업무 동물 유형은 " + result.emoji + " " + result.name + " (" + type + ")!\n“" + result.tagline + "”",
-      url: url
-    };
+window.shareResult = async function (type) {
+  const resultUrl = getResultUrl(type);
+
+  try {
+    await navigator.clipboard.writeText(resultUrl);
+
+    alert("결과 공유 링크를 복사했어요!");
+  } catch (error) {
+    prompt(
+      "아래 결과 링크를 복사하세요.",
+      resultUrl
+    );
+  }
+};
     if (navigator.share) {
       try {
         await navigator.share(data);
@@ -275,7 +281,7 @@
       buttons = '<div class="actions"><button type="button" class="btn primary" onclick="startTest()">나도 참여하기</button></div>';
     } else {
       buttons = '<div class="actions">' +
-        '<button type="button" class="btn ghost" onclick="saveShareCard(\'' + type + '\')">결과 이미지 저장</button>' +
+        '<button type="button" class="btn ghost" onclick="saveShareCard(\'' + type + '\')">결과 카드 저장</button>' +
         '<button type="button" class="btn primary" onclick="shareResult(\'' + type + '\')">결과 공유하기</button>' +
         '<button type="button" class="btn event-btn" onclick="goToEventPage()">이벤트 페이지 돌아가기</button>' +
         "</div>";
