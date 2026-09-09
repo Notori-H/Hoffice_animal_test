@@ -229,6 +229,7 @@
     const enteredName = window.prompt("결과에 표시될 이름을 입력해주세요.\n\n(닉네임 가능)\n※ 🎁 결과 공유 이벤트 참여 시 실명 입력 권장", "");
     if (enteredName === null) return;
     participantName = enteredName.trim().slice(0, 20);
+    window.participantName = participantName;
     if (!participantName) {
       alert("닉네임을 입력해야 테스트를 시작할 수 있어요.");
       return;
