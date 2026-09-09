@@ -286,7 +286,7 @@
       buttons = '<div class="actions"><button type="button" class="btn primary" onclick="startTest()">나도 참여하기</button></div>';
     } else {
       buttons = '<div class="actions">' +
-        '<button type="button" class="btn ghost" onclick="saveShareCard(\'' + type + '\')">결과 요약 이미지 저장</button>' +
+        '<button type="button" class="btn ghost" onclick="saveShareCard(\'' + type + '\')">결과 카드 저장</button>' +
         '<button type="button" class="btn primary" onclick="shareResult(\'' + type + '\')">결과 공유하기</button>' +
         '<button type="button" class="btn event-btn" onclick="goToEventPage()">이벤트 페이지 돌아가기</button>' +
         "</div>";
