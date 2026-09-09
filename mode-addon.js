@@ -52,42 +52,78 @@
   }
 
   window.startTest = function (mode) {
-    window.testMode = mode || SELF_MODE;
+  window.testMode = mode || SELF_MODE;
 
-    if (window.testMode === LEADER_MODE) {
-      const enteredName = window.prompt(
-        "업무 성향을 예측해보고 싶은 리더의 성함을 입력해주세요.\n\n" +
-        "※ 재미로 참여하는 예측 콘텐츠입니다. 익명 절대 보장!!\n" +
-        "※ 참여 결과는 추후 '직원들이 예측한 리더 성향' 게시물로 공유될 수 있습니다."
-      );
-    } else {
+  let enteredName = "";
 
-      const enteredName = window.prompt(
-        "결과에 표시될 이름을 입력해주세요.\n\n(닉네임 가능)\n※ 🎁 결과 공유 이벤트 참여 시 실명 입력 권장",
-        ""
-      );
- 
-    }
-  participantName = enteredName.trim().slice(0,20);
-  window.participantName = participantName;
+  if (window.testMode === LEADER_MODE) {
+    enteredName = window.prompt(
+      "업무 성향을 예측해보고 싶은 리더의 성함을 입력해주세요.\n\n" +
+      "※ 재미로 참여하는 예측 콘텐츠입니다. 익명 절대 보장!!\n" +
+      "※ 참여 결과는 추후 '직원들이 예측한 리더 성향' 게시물로 공유될 수 있습니다.",
+      ""
+    );
+  } else {
+    enteredName = window.prompt(
+      "결과에 표시될 이름을 입력해주세요.\n\n" +
+      "(닉네임 가능)\n" +
+      "※ 🎁 결과 공유 이벤트 참여 시 실명 입력 권장",
+      ""
+    );
+  }
+
+  /*
+    취소 버튼을 누른 경우 테스트를 시작하지 않습니다.
+  */
+  if (enteredName === null) {
+    return;
+  }
+
+  enteredName = enteredName.trim();
+
+  /*
+    입력값이 비어 있으면 테스트를 시작하지 않습니다.
+  */
+  if (!enteredName) {
+    alert(
+      window.testMode === LEADER_MODE
+        ? "예측할 리더의 성함을 입력해주세요."
+        : "결과에 표시할 이름을 입력해주세요."
+    );
+
+    return;
+  }
+
+  /*
+    입력한 이름을 결과, 공유 링크,
+    PNG 카드 및 Supabase 저장에 사용합니다.
+  */
+  window.participantName =
+    enteredName.slice(0, 20);
+
+  /*
+    테스트 상태를 초기화합니다.
+  */
   idx = 0;
   answers = [];
   resultSaved = false;
- 
+
+  /*
+    이전 결과 주소를 제거합니다.
+  */
   window.history.replaceState(
     {},
     "",
     window.location.origin +
       window.location.pathname
-);
- 
+  );
+
+  /*
+    두 번째 팝업 없이 바로 퀴즈를 시작합니다.
+  */
   show("quiz");
   renderQ();
- 
-  return;
-}
-  };
-
+};
   window.renderResult = function (type, scores, sharedResult) {
     originalRenderResult(type, scores, sharedResult);
 
