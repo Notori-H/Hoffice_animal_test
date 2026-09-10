@@ -115,12 +115,28 @@
     character.appendChild(image);
     card.appendChild(character);
 
-    if (participantName) {
-      const owner = document.createElement("div");
-      owner.className = "share-card-owner";
-      owner.textContent = participantName + "님의 결과";
-      card.appendChild(owner);
-    }
+    if (window.participantName) {
+  const owner =
+    document.createElement("div");
+
+  owner.className =
+    "share-card-owner";
+
+  if (
+    window.testMode ===
+    "leader_prediction"
+  ) {
+    owner.textContent =
+      window.participantName +
+      "님의 예측 결과";
+  } else {
+    owner.textContent =
+      window.participantName +
+      "님의 결과";
+  }
+
+  card.appendChild(owner);
+}
 
     const name = document.createElement("div");
     name.className = "share-card-name";
